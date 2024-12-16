@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->string('image');
             $table->boolean('status');
-            $table->foreignId('shop')->constrained('shops', 'id')->nullable();
+            $table->foreignId('shop_id')->constrained('shops', 'id')->nullable();
             $table->foreignId('category_id')->constrained('categories', 'id');
             $table->timestamps();
         });

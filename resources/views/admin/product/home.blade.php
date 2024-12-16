@@ -41,7 +41,7 @@
                                 <td class="align-middle">{{ $product->description }}</td>
                                 <td class="align-middle"><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
                                 <td class="align-middle">{{ $product->price }}</td>
-                                <td class="align-middle">{{ $product->shop}}</td>
+                                <td class="align-middle">{{ $product->shop->name}}</td>
                                 <td class="align-middle">
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <a href="{{ route('admin.product.edit', ['id'=>$product->id]) }}" type="button" class="btn btn-secondary">Edit</a>

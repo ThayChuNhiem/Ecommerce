@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -14,7 +15,8 @@ class ProductController extends Controller
     {
         $products = Product::all();
         $categories = Category::all();
-        return view('admin.product.home', compact('products', 'categories'));
+        $shops = Shop::all();
+        return view('admin.product.home', compact('products', 'categories', 'shops'));
     }
 
 
@@ -34,14 +36,14 @@ class ProductController extends Controller
             'price' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'required',
-            'shop' => 'required',
+            'shop_id' => 'required',
             'category_id' => 'required',
         ]);
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
             $validation['image'] = $imagePath; // Lưu đường dẫn của file vào mảng $validation
         }
-        
+
         $data = Product::create($validation);
         if ($data) {
             session()->flash('success', 'Product Add Successfully');
@@ -55,9 +57,11 @@ class ProductController extends Controller
     public function edit($id)
     {
         $products = Product::findOrFail($id);
-        return view('admin.product.update', compact('products'));
+        $categories = Category::all();
+        $shops = Shop::all();
+        return view('admin.product.update', compact('products', 'categories', 'shops'));
     }
-    
+
     public function delete($id)
     {
         $products = Product::findOrFail($id)->delete();
@@ -69,24 +73,42 @@ class ProductController extends Controller
             return redirect(route('admin.product'));
         }
     }
- 
+
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => 'required|boolean',
+            'shop_id' => 'required|integer',
+            'category_id' => 'required|integer',
+        ]);
+
         $products = Product::findOrFail($id);
         $name = $request->name;
         $description = $request->description;
         $price = $request->price;
-        $image = $request->image;
         $status = $request->status;
-        $shop = $request->shop;
+        $shop_id = $request->shop_id;
         $category_id = $request->category_id;
- 
+        if ($request->hasFile('image')) {
+            // Xóa file cũ nếu có
+            if ($products->image) {
+                Storage::disk('public')->delete($products->image);
+            }
+            // Lưu file mới
+            $imagePath = $request->file('image')->store('products', 'public');
+            $products->image = $imagePath;
+        }
+
+
         $products->name = $name;
         $products->description = $description;
         $products->price = $price;
-        $products->image = $image;
         $products->status = $status;
-        $products->shop = $shop;
+        $products->shop_id = $shop_id;
         $products->category_id = $category_id;
         $data = $products->save();
         if ($data) {
@@ -97,5 +119,4 @@ class ProductController extends Controller
             return redirect(route('admin.product.update'));
         }
     }
-
 }
