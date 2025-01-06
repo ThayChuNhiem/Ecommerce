@@ -1,4 +1,4 @@
-<x-guest-layout>
+{{-- <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -49,4 +49,55 @@
             </x-primary-button>
         </div>
     </form>
+</x-guest-layout> --}}
+<!-- resources/views/auth/register.blade.php -->
+<x-guest-layout>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h4>{{ __('Register') }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                <div class="form-group">
+                    <label for="name">{{ __('Name') }}</label>
+                    <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+                    @error('name')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="email">{{ __('Email') }}</label>
+                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+                    @error('email')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="row">
+                    <div class="form-group col-6">
+                        <label for="password">{{ __('Password') }}</label>
+                        <input id="password" type="password" class="form-control" name="password" required>
+                        @error('password')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="password_confirmation">{{ __('Confirm Password') }}</label>
+                        <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
+                        @error('password_confirmation')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                        {{ __('Register') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="mb-4 text-muted text-center">
+            {{ __('Already registered?') }} <a href="{{ route('login') }}">{{ __('Login') }}</a>
+        </div>
+    </div>
 </x-guest-layout>

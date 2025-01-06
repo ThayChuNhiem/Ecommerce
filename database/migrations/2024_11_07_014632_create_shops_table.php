@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('email');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status');
             $table->foreignId('owner')->constrained('users', 'id');

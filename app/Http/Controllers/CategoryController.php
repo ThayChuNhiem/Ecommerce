@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Product;
+use App\Models\Shop;
+
 
 class CategoryController extends Controller
 {
     //
     public function index()
     {
-        $Categories = Category::all();
-        return view('admin.category.home', compact('Categories'));
+        $products = Product::all();
+        $categories = Category::all();
+        $shops = Shop::all();
+        return view('admin.dashboard', compact('products', 'categories', 'shops'));
     }
 
 
@@ -26,13 +31,18 @@ class CategoryController extends Controller
         $validation = $request->validate([
             'name' => 'required',
             'description' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'required',
         ]);
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validation['image'] = $imagePath; // Lưu đường dẫn của file vào mảng $validation
+        }
         
         $data = Category::create($validation);
         if ($data) {
             session()->flash('success', 'Category Add Successfully');
-            return redirect(route('admin.category'));
+            return redirect(route('admin.dashboard'));
         } else {
             session()->flash('error', 'Some problem occure');
             return redirect(route('admin.category.create'));
@@ -50,10 +60,10 @@ class CategoryController extends Controller
         $categories = Category::findOrFail($id)->delete();
         if ($categories) {
             session()->flash('success', 'Product Deleted Successfully');
-            return redirect(route('admin.category'));
+            return redirect(route('admin.dashboard'));
         } else {
             session()->flash('error', 'Product Not Delete successfully');
-            return redirect(route('admin.category'));
+            return redirect(route('admin.dashboard'));
         }
     }
  
@@ -70,7 +80,7 @@ class CategoryController extends Controller
         $data = $categories->save();
         if ($data) {
             session()->flash('success', 'Product Update Successfully');
-            return redirect(route('admin.category'));
+            return redirect(route('admin.dashboard'));
         } else {
             session()->flash('error', 'Some problem occure');
             return redirect(route('admin.category.update'));

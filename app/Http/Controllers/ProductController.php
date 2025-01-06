@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     //
+
     public function index()
     {
         $products = Product::all();
         $categories = Category::all();
         $shops = Shop::all();
-        return view('admin.product.home', compact('products', 'categories', 'shops'));
+        // return view('admin.dashboard', compact('products', 'categories', 'shops'));
+        return redirect(route('admin.dashboard'));
     }
 
 
@@ -47,10 +49,10 @@ class ProductController extends Controller
         $data = Product::create($validation);
         if ($data) {
             session()->flash('success', 'Product Add Successfully');
-            return redirect(route('admin.product'));
+            return redirect(route('admin.dashboard'));
         } else {
             session()->flash('error', 'Some problem occure');
-            return redirect(route('admin.product.create'));
+            return redirect(route('admin.dashboard'));
         }
     }
 
@@ -67,10 +69,10 @@ class ProductController extends Controller
         $products = Product::findOrFail($id)->delete();
         if ($products) {
             session()->flash('success', 'Product Deleted Successfully');
-            return redirect(route('admin.product'));
+            return redirect(route('admin.dashboard'));
         } else {
             session()->flash('error', 'Product Not Delete successfully');
-            return redirect(route('admin.product'));
+            return redirect(route('admin.dashboard'));
         }
     }
 
@@ -113,7 +115,7 @@ class ProductController extends Controller
         $data = $products->save();
         if ($data) {
             session()->flash('success', 'Product Update Successfully');
-            return redirect(route('admin.product'));
+            return redirect(route('admin.dashboard'));
         } else {
             session()->flash('error', 'Some problem occure');
             return redirect(route('admin.product.update'));

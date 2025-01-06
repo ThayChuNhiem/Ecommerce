@@ -1,3 +1,4 @@
+<!-- resources/views/update.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -6,100 +7,100 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h1 class="mb-0">Edit Product</h1>
-                    <hr />
-                    <form action="{{ route('admin.product.update', $products->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="row">
-                            <div class="col mb-3">
-                                <label class="form-label">Product Name</label>
-                                <input type="text" name="name" class="form-control" placeholder="{{$products->name}}"
-                                    value="{{ old('name', $products->name) }}">
-                                @error('title')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    @if (session()->has('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
                         </div>
-                        <div class="row">
-                            <div class="col mb-3">
-                                <select name="category_id" class="form-control">
-                                    <option value="{{ old('category_id', $products->category_id) }}">{{$products->category->name}}</option>
-                                    @foreach ($categories as $category)
-                                        <option value="">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+                    @endif
+                    @if (session()->has('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
                         </div>
-                        <div class="row">
-                            <div class="col mb-3">
-                                <input type="text" name="description" class="form-control"
-                                    placeholder="{{$products->description}}"
-                                    value="{{ old('description', $products->description) }}">
-                                @error('category')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col mb-3">
-                                <div class="col">
-                                    <input type="text" name="price" class="form-control"
-                                    placeholder="{{$products->price}}" value="{{ old('price', $products->price) }}">
+                    @endif
+
+                    <div class="card">
+                        <div class="card-header">{{ __('Edit Product') }}</div>
+
+                        <div class="card-body">
+                            <form action="{{ route('admin.product.update', $products->id) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                <div class="form-group">
+                                    <label for="name">Product Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $products->name) }}" required>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" name="description" required>{{ old('description', $products->description) }}</textarea>
+                                    @error('description')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="price">Price</label>
+                                    <input type="text" class="form-control" id="price" name="price" value="{{ old('price', $products->price) }}" required>
                                     @error('price')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col mb-3">
-                                <div class="col">
-                                    <input type="file" name="image" class="form-control" 
-                                    value="{{ old('image', $products->image) }}">
-                                @error('image')
-                                <span class="text-danger">{{$message}}</span>
-                                @enderror
+                                <div class="form-group">
+                                    <label for="image">Image</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                    @if ($products->image)
+                                        <img src="{{ asset('storage/' . $products->image) }}" alt="{{ $products->name }}" width="100" class="mt-2">
+                                    @endif
+                                    @error('image')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                            </div>
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select class="form-control" id="status" name="status" required>
+                                        <option value="1" {{ old('status', $products->status) == 1 ? 'selected' : '' }}>Active</option>
+                                        <option value="0" {{ old('status', $products->status) == 0 ? 'selected' : '' }}>Inactive</option>
+                                    </select>
+                                    @error('status')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="shop">Shop</label>
+                                    <select class="form-control" id="shop_id" name="shop_id" required>
+                                        <option value="">Select Shop</option>
+                                        @foreach($shops as $shop)
+                                            <option value="{{ $shop->id }}" {{ old('shop') == $shop->id ? 'selected' : '' }}>{{ $shop->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('shop')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="category_id">Category</label>
+                                    <select class="form-control" id="category_id" name="category_id" required>
+                                        <option value="">Select Category</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ old('category_id', $products->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group text-right">
+                                    <a href="{{ route('admin.product') }}" class="btn btn-secondary">Go Back</a>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <select name="status" class="form-control">
-                                    <option value="{{old('status', $products->status)}}">{{$products->status}}</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
-                                @error('status')
-                                <span class="text-danger">{{$message}}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <select name="shop" class="form-control">
-                                    <option value="{{old('shop',$products->shop)}}">{{$products->shop}}</option>
-                                    @foreach($shops as $shop)
-                                    <option value="{{$shop->id}}">{{$shop->name}}</option>
-                                    @endforeach
-                                </select>
-                                @error('shop')
-                                <span class="text-danger">{{$message}}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="d-grid">
-                                <button class="btn btn-warning">Update</button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
